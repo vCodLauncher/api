@@ -33,4 +33,12 @@ const authUser = async (req, res) => {
     }
 };
 
-module.exports = { authUser };
+const getMe = async (req, res) => {
+    try {
+        const decoded = jsonwebtoken.decode(req.headers.authorization.split(' ')[1])
+        res.json( { user : decoded.userWithoutPassword});
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
+module.exports = { authUser, getMe };

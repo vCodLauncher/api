@@ -28,7 +28,13 @@
     "prisma": "^4.16.1",
     "prisma-dbml-generator": "^0.10.0"
   },
+<<<<<<< HEAD
 "prisma": {
   "seed": "node prisma/seed.js"
 }
+=======
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+>>>>>>> 22965514428f7feb71df7f9d387b0e89829a4751
 }

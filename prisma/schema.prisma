@@ -12,6 +12,7 @@ datasource db {
 }
 
 model User {
+<<<<<<< HEAD
   id            Int      @id @default(autoincrement())
   email         String   @unique
   firstName     String
@@ -20,6 +21,16 @@ model User {
   password      String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+=======
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  firstName String
+  lastName  String
+  role      Role?    @default(Viewer)
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+>>>>>>> 22965514428f7feb71df7f9d387b0e89829a4751
 }
 
 enum Role {
