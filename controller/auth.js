@@ -13,22 +13,21 @@ const authUser = async (req, res) => {
             },
         });
         if (!user) {
-            res.status(404).json({ error: "Invalid credentials" });
+            return res.status(404).json({ error: "Invalid credentials" });
         }
         if (user.password === password) {
             const { password, ...userWithoutPassword } = user;
-
             jsonwebtoken.sign({ userWithoutPassword }, process.env.JWT_SECRET, { expiresIn: '8h' }, (err, token) => {
                 if (err) {
-                    res.status(500).json({ error: err.message });
+                    return res.status(500).json({ error: err.message });
                 }
-                res.json({ token });
+                return res.json({ token });
             });
         } else {
-            res.status(404).json({ error: "Invalid credentials" });
+            return res.status(404).json({ error: "Invalid credentials" });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     } finally {
         await prisma.$disconnect();
     }
