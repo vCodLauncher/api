@@ -28,7 +28,7 @@ class Server {
             name: `cod-server-${port}`,
             script: 'sh',
             args: ['start_server.sh', port, serverType, serverGamemode],
-            cwd: 'bash_server_manager'
+            cwd: '../bash_server_manager'
         }, (err, apps) => {
             if (err) {
                 throw err;
