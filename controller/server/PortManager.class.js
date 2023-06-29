@@ -1,4 +1,3 @@
-
 const allowedPorts = [
     28960,
     28961,
@@ -18,26 +17,28 @@ const allowedPorts = [
     28975,
 ];
 
-class PortManager {
-    constructor() {
-        this.usedPorts = [];
-    }
+const usedPorts = [];
 
-    getPort() {
-        let port = allowedPorts[Math.floor(Math.random() * allowedPorts.length)];
-        if (this.usedPorts.indexOf(port) === -1) {
-            this.usedPorts.push(port);
-            return port;
-        } else {
-            return this.getPort();
+class PortManager {
+    attributePort() {
+        for (let port of allowedPorts) {
+            if (!usedPorts.includes(port)) {
+                usedPorts.push(port);
+                return port;
+            }
         }
+        throw new Error("No available ports"); // Lance une erreur si aucun port n'est disponible
     }
 
     releasePort(port) {
-        const index = this.usedPorts.indexOf(port);
-        if (index !== -1) {
-            this.usedPorts.splice(index, 1);
+        const index = usedPorts.indexOf(port);
+        if (index > -1) {
+            usedPorts.splice(index, 1);
         }
+    }
+
+    isPortInUse(port) {
+        return usedPorts.includes(port); // Retourne true si le port est utilisé, false sinon
     }
 }
 
