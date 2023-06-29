@@ -19,24 +19,36 @@ class Server {
 
     }
 
-    startServer(req, res) {
-        let port = req.query.port;
-        let serverType = req.query.serverType;
-        let serverGamemode = req.query.serverGamemode;
+    startServer(port, serverType, serverGamemode) {
+        let serverModInfo = 'ro';
+        let portInfo = port;
+        let serverTypeInfo = serverType;
+        let serverGamemodeInfo = serverGamemode;
 
-        pm2.start({
-            name: `cod-server-${port}`,
-            script: 'sh',
-            args: ['start_server.sh', port, serverType, serverGamemode],
-            cwd: '../bash_server_manager'
-        }, (err, apps) => {
-            if (err) {
-                throw err;
-            }
-            this.serverList.push(apps[0].pm2_env.pm_id);
-            res.json({ message: `Server started on port ${port}` });
-        });
+        switch (serverGamemode) {
+            case 'sd':
+                if (serverType === 'ro') {
+                    // ask PortManager for a port
+
+                } else {
+
+                }
+                break;
+            case 'tdm':
+
+                break;
+            case 'dm':
+
+                break;
+            case 'ctf':
+
+                break;
+            default:
+
+                break;
+        }
     }
+
 
     stopServer(req, res) {
         let serverId = req.query.serverId;
