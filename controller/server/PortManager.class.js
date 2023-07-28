@@ -40,6 +40,14 @@ class PortManager {
     isPortInUse(port) {
         return usedPorts.includes(port); // Retourne true si le port est utilisé, false sinon
     }
+
+    getUsedPorts() {
+        return usedPorts;
+    }
+
+    getFreePorts() {
+        return allowedPorts.filter(port => !usedPorts.includes(port));
+    }
 }
 
 module.exports = PortManager;

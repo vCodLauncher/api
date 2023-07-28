@@ -12,7 +12,6 @@ const executeRouter = require('./router/ExecuteRouter');
 const roomRouter = require('./router/RoomRouter');
 const userRouter = require('./router/UserRouter');
 const serverRouter = require('./router/ServerRouter');
-const portRouter = require('./router/ServerRouter');
 
 
 
@@ -22,7 +21,6 @@ app.use('/execute', executeRouter);
 app.use('/room', roomRouter);
 app.use('/user', userRouter);
 app.use('/server', serverRouter);
-app.use('/port', portRouter);
 app.listen(port, () => {
     console.log(`API démarrée sur http://localhost:${port}`)
 });

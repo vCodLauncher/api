@@ -5,6 +5,7 @@ const { verifyToken } = require("../middlewares/VerifyToken");
 const router = Router();
 
 router.use(verifyToken);
+
 router.get('/', (req, res) => {
     console.log('appel route')
     let port = req.query.port;  // Récupère le port depuis les paramètres de la requête
@@ -26,6 +27,6 @@ router.get('/', (req, res) => {
         if (code) console.log(`Process exited with code ${code}`)
         if (signal) console.log(`Process was killed with signal ${signal}`)
     })
-})
+});
 
 module.exports = router;

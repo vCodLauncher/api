@@ -1,50 +1,45 @@
-const pm2 = require('pm2');
+const PortManager = require("../server/PortManager.class");
+const pm = new PortManager();
+
+const { exec } = require('child_process');
 
 class Server {
-    startServer(port, serverType, serverGamemode) {
-        let serverModInfo = 'ro';
-        let portInfo = port;
-        let serverTypeInfo = serverType;
-        let serverGamemodeInfo = serverGamemode;
-
-        switch (serverGamemode) {
-            case 'sd':
-                if (serverType === 'ro') {
-                    // ask PortManager for a port
-
-                } else {
-
-                }
-                break;
-            case 'tdm':
-
-                break;
-            case 'dm':
-
-                break;
-            case 'ctf':
-
-                break;
-            default:
-
-                break;
-        }
-    }
-
-
-    stopServer(req, res) {
+    constructor() {
 
     }
 
-    listServer(req, res) {
+    startServer(gameMode) {
+        let server;
+
+        let port = pm.attributePort();
+
+        console.log(port);
+
+        exec('sh ../../bash_server_manager/start_server.sh', (error, stdout, stderr) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                return;
+            }
+
+            server = stdout;
+            console.log(`stdout: ${stdout}`);
+        })
 
     }
 
-    serverStatus(req, res) {
+    stopServer() {
 
     }
 
-    killServer(req, res) {
+    listServer() {
+
+    }
+
+    getServer() {
 
     }
 }
