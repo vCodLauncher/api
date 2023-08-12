@@ -21,6 +21,7 @@ model User {
   updatedAt DateTime @updatedAt
   roomId    Int?
   Room      Room?    @relation(fields: [roomId], references: [id])
+  banners Banner[]
 }
 
 model Room {
@@ -30,6 +31,16 @@ model Room {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   players    User[]
+}
+
+model Banner {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  imageUrl    String    // URL de l'image de la bannière
+  isAvailable Boolean   @default(true) // Indique si la bannière est disponible ou non
+  userId      Int?      // ID de l'utilisateur associé à cette bannière
+  user        User?     @relation(fields: [userId], references: [id])
 }
 
 enum Role {

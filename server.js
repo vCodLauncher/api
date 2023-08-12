@@ -1,4 +1,3 @@
-
 const express = require('express')
 const { spawn } = require('child_process')
 const cors = require('cors')
@@ -13,8 +12,6 @@ const roomRouter = require('./router/RoomRouter');
 const userRouter = require('./router/UserRouter');
 const serverRouter = require('./router/ServerRouter');
 
-
-
 app.use(express.json());
 app.use('/auth', authRouter);
 app.use('/execute', executeRouter);
@@ -24,6 +21,5 @@ app.use('/server', serverRouter);
 app.listen(port, () => {
     console.log(`API démarrée sur http://localhost:${port}`)
 });
-
 
 // http://193.38.250.89:3000/execute?port=28965
