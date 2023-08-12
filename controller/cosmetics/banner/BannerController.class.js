@@ -101,6 +101,20 @@ class BannerController {
             res.status(400).json({ message: 'Error', error: err });
             }
         }
+
+        async getBannerById(req, res) {
+            const { id } = req.params;
+            try {
+                const banner = await prisma.banner.findUnique({
+                    where: {
+                        id: Number(id),
+                    }
+                });
+                res.json({ banner });
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        }
 }
 
 module.exports = BannerController;

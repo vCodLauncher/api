@@ -11,6 +11,7 @@ const executeRouter = require('./router/ExecuteRouter');
 const roomRouter = require('./router/RoomRouter');
 const userRouter = require('./router/UserRouter');
 const serverRouter = require('./router/ServerRouter');
+const bannerRouter = require('./router/BannerRouter');
 
 app.use(express.json());
 app.use('/auth', authRouter);
@@ -18,8 +19,11 @@ app.use('/execute', executeRouter);
 app.use('/room', roomRouter);
 app.use('/user', userRouter);
 app.use('/server', serverRouter);
+app.use('/banner', bannerRouter);
 
-app.use('/banner', express.static("cosmetics/assets/banner"));
+app.use('/bannerURL', express.static("cosmetics/assets/banner"));
+
+app.use
 
 
 
