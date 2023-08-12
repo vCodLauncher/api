@@ -12,18 +12,16 @@ datasource db {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  nickname      String
-  role          Role?    @default(Player)
-  password      String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  roomId        Int?
-  Room          Room?    @relation(fields: [roomId], references: [id])
-  banners       Banner[]
-  activeBannerId Int?
-  activeBanner  Banner?  @relation("ActiveBanner", fields: [activeBannerId], references: [id])
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  nickname  String
+  role      Role?    @default(Player)
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  roomId    Int?
+  Room      Room?    @relation(fields: [roomId], references: [id])
+  banners   Banner[]
 }
 
 model Room {
@@ -36,14 +34,13 @@ model Room {
 }
 
 model Banner {
-  id           Int       @id @default(autoincrement())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  imageUrl     String    // URL de l'image de la bannière
-  isAvailable  Boolean   @default(true) // Indique si la bannière est disponible ou non
-  userId       Int?      // ID de l'utilisateur associé à cette bannière
-  user         User?     @relation(fields: [userId], references: [id])
-  ownedByUser  User?     @relation("ActiveBanner")
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  imageUrl    String // URL de l'image de la bannière
+  isAvailable Boolean  @default(true) // Indique si la bannière est disponible ou non
+  userId      Int? // ID de l'utilisateur associé à cette bannière
+  user        User?    @relation(fields: [userId], references: [id])
 }
 
 enum Role {

@@ -75,6 +75,17 @@ class Room {
             throw new Error('An error occurred while fetching room list');
         }
     }
+
+    //get room by id
+    async getRoomById(roomId) {
+        try {
+            const room = await prisma.room.findUnique({ where: { id: roomId }, include: { players: true } });
+            return room;
+        } catch (error) {
+            console.error(error);
+            throw new Error('An error occurred while fetching room list');
+        }
+    }
 }
 
 module.exports = Room;

@@ -2,6 +2,7 @@ const express = require("express");
 const Room = require('../controller/room/RoomManager.class');
 const jsonwebtoken = require("jsonwebtoken");
 const { verifyToken } = require("../middlewares/VerifyToken");
+const {parse} = require("dotenv");
 const maxPlayers = 10;
 
 const router = express.Router();
@@ -19,9 +20,9 @@ router.post('/create', async (req, res) => {
     }
 });
 
-router.post('/join', async (req, res) => {
+router.post('/join/:id', async (req, res) => {
     try {
-        const { roomId } = req.body;
+        const roomId = parseInt(req.params.id);
         const decoded = jsonwebtoken.decode(req.headers.authorization.split(' ')[1]);
         const user = decoded.userWithoutPassword;
 
@@ -61,6 +62,16 @@ router.get('/list', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: 'An error occurred while fetching room list' });
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    try {
+        const room = await roomManager.getRoomById(parseInt(req.params.id));
+        res.send(room);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'An error occurred while fetching room' });
     }
 });
 
