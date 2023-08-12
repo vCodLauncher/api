@@ -1,10 +1,16 @@
 const { Router } = require('express');
-const {getBannerById} = require('../controller/cosmetics/banner/BannerController.class')
+const { getBanner } = require('../controller/cosmetics/banner/BannerController.class')
 
 const { authUser, getMe} = require('../controller/auth');
+const {verifyToken} = require("../middlewares/VerifyToken");
+
+
+
 
 const router = Router();
 
-router.get('/:id', getBannerById);
+router.use(verifyToken);
+
+router.get('/:id', getBanner);
 
 module.exports = router;
