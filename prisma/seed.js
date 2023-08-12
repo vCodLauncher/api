@@ -2,6 +2,9 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+
+const img = '../cosmetics/assets/banner/test.webp'
+
 async function run() {
 
     const user = await prisma.user.upsert({
@@ -13,6 +16,15 @@ async function run() {
             password: 'password123', // Add a password property here
         },
     });
+
+    const banner = await prisma.banner.upsert({
+        where: {id : 1},
+        update : {},
+        create: {
+            imageUrl: img,
+
+        }
+    })
 
     const room = await prisma.room.upsert({
         where: { id: 1 },

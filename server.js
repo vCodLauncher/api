@@ -18,6 +18,12 @@ app.use('/execute', executeRouter);
 app.use('/room', roomRouter);
 app.use('/user', userRouter);
 app.use('/server', serverRouter);
+
+app.use('/banner', express.static("cosmetics/assets/banner"));
+
+
+
+
 app.listen(port, () => {
     console.log(`API démarrée sur http://localhost:${port}`)
 });
