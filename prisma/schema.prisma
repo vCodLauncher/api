@@ -14,17 +14,33 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  firstName String
-  lastName  String
-  role      Role?    @default(Viewer)
+  nickname  String
+  role      Role?    @default(Player)
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  roomId    Int?
+  Room      Room?    @relation(fields: [roomId], references: [id])
+}
+
+model Room {
+  id         Int      @id @default(autoincrement())
+  maxPlayers Int
+  status     Status?  @default(Waiting)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  players    User[]
 }
 
 enum Role {
   SuperAdmin
   Admin
-  User
-  Viewer
+  Mod
+  Player
+}
+
+enum Status {
+  Waiting
+  InProgress
+  Finished
 }

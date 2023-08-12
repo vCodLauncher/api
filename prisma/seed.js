@@ -9,13 +9,20 @@ async function run() {
         update: {},
         create: {
             email: 'user@example.com',
-            firstName: 'User',
-            lastName: 'Example',
+            nickname: 'nickLaTrick',
             password: 'password123', // Add a password property here
         },
     });
 
-    console.log(user);
+    const room = await prisma.room.upsert({
+        where: { id: 1 },
+        update: {},
+        create: {
+            maxPlayers: 8,
+        },
+    });
+
+    console.log(room);
 }
 
 run()

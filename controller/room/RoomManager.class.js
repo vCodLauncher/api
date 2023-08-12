@@ -1,72 +1,80 @@
-const axios = require("axios");
-const { exec } = require("child_process");
-const ServerManager = require("../server/Server.class");
-const sm = new ServerManager();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 class Room {
-    constructor(id, maxPlayers) {
-        this.id = id;
-        this.players = [];
-        this.maxPlayers = maxPlayers;
-        this.status = 'waiting'; // 'waiting', 'in-progress', 'finished'
+    async createRoom(maxPlayers) {
+        try {
+            const room = await prisma.room.create({
+                data: {
+                    maxPlayers: maxPlayers
+                }
+            });
+            return room;
+        } catch (error) {
+            console.error(error);
+            throw new Error('An error occurred while creating the room');
+        }
     }
 
-    joinRoom(playerName) {
-        if (this.players.length < this.maxPlayers) {
-            this.players.push(playerName);
+    async joinRoom(roomId, userId) {
+        try {
+            const room = await prisma.room.findUnique({ where: { id: roomId }, include: { players: true } });
+            if (room && room.players.length < room.maxPlayers) {
+                await prisma.room.update({
+                    where: { id: roomId },
+                    data: {
+                        players: {
+                            connect: { id: userId }
+                        }
+                    }
+                });
 
-            if (this.players.length === 8) {
-                this.startGame();
+                return 'success';
+            } else {
+                return "Room is full or doesn't exist";
             }
-
-            return true;
-        }
-        return false;
-    }
-
-    leaveRoom(playerName) {
-        const index = this.players.indexOf(playerName);
-        if (index !== -1) {
-            this.players.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
-
-    isFull() {
-        return this.players.length >= this.maxPlayers;
-    }
-
-    startGame() {
-        if (this.status === 'waiting' && this.players.length > 1) {
-            this.status = 'in-progress';
-            // start a server
-            // execute client game + connect to server
-            console.log("Démarage du serveur");
-            sm.startServer('tdm');
-
-            // execute serve
-            // exec('echo "hello world"', (error, stdout, stderr) => {
-            //     if (error) {
-            //         console.log(`error: ${error.message}`);
-            //         return;
-            //     }
-            //     if (stderr) {
-            //         console.log(`stderr: ${stderr}`);
-            //         return;
-            //     }
-            //
-            //     console.log(`stdout: ${stdout}`);
-            // });
+        } catch (error) {
+            console.error(error);
+            throw new Error('An error occurred while joining the room');
         }
     }
 
-    endGame() {
-        if (this.status === 'in-progress') {
-            this.status = 'finished';
+    async leaveRoom(userId) {
+        try {
+            const user = await prisma.user.findUnique({ where: { id: userId }, include: { Room: true } });
+            if (user && user.Room) {
+                await prisma.room.update({
+                    where: { id: user.Room.id },
+                    data: {
+                        players: {
+                            disconnect: { id: userId }
+                        }
+                    }
+                });
+                return 'success';
+            } else {
+                return "User was not in a room";
+            }
+        } catch (error) {
+            console.error(error);
+            throw new Error('An error occurred while leaving the room');
+        }
+    }
+
+    async getRoomList() {
+        try {
+            const rooms = await prisma.room.findMany({ include: { players: true } });
+            return rooms.map(room => ({
+                id: room.id,
+                players: room.players,
+                maxPlayers: room.maxPlayers,
+                status: room.status
+            }));
+        } catch (error) {
+            console.error(error);
+            throw new Error('An error occurred while fetching room list');
         }
     }
 }
-
 
 module.exports = Room;

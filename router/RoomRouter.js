@@ -1,72 +1,67 @@
-const {Router}  = require("express");
+const express = require("express");
 const Room = require('../controller/room/RoomManager.class');
-
-const router = Router();
-
-// router.use(verifyToken); à remettre en place quand il y aura la logique d'utilisateur
-
-// router.get('/:roomType', (req, res) => {
-//     console.log('request roomtype')
-//     let roomType = req.params.roomType;
-//     if (!(roomType in rooms)) {
-//         res.status(400).send('Invalid room type');
-//         return;
-//     }
-//
-//     let room = rooms[roomType];
-//
-//     res.send({ players: room.players });
-// });
-
-let rooms = {};
-let serverStatus;
+const jsonwebtoken = require("jsonwebtoken");
+const { verifyToken } = require("../middlewares/VerifyToken");
 const maxPlayers = 10;
 
-let generateId = () => {
-    let response = Math.random().toString(16).slice(2);
-    return response;
-}
+const router = express.Router();
+router.use(verifyToken);
 
-router.post('/create', (req, res) => {
-    let id = generateId(); // fonction pour générer un identifiant unique pour la salle
-    rooms[id] = new Room(id, maxPlayers);
-    res.send(id);
-    console.log(id);
-})
+const roomManager = new Room(); // Créez une instance de la classe Room
 
-router.post('/join', (req, res) => {
-    let {roomId, playerName} = req.body;
-    let room = rooms[roomId];
-    if(room && !room.isFull()) {
-        room.joinRoom(playerName);
-        res.send({message: playerName + " Joined the room", roomId: roomId});
-    } else {
-        res.status(400).send({message: "Room is full or doesn't exist"});
+router.post('/create', async (req, res) => {
+    try {
+        const room = await roomManager.createRoom(req.body.maxPlayers || maxPlayers);
+        res.send({ roomId: room.id });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'An error occurred while creating the room' });
     }
 });
 
-router.post('/leave', (req, res) => {
-    const {roomId, playerName} = req.body;
-    const room = rooms[roomId];
-    if (room) {
-        const success = room.leaveRoom(playerName);
-        if (success) {
-            res.send({message: playerName + " left the room", roomId: roomId});
+router.post('/join', async (req, res) => {
+    try {
+        const { roomId } = req.body;
+        const decoded = jsonwebtoken.decode(req.headers.authorization.split(' ')[1]);
+        const user = decoded.userWithoutPassword;
+
+        const message = await roomManager.joinRoom(roomId, user.id);
+        if (message === 'success') {
+            res.send({ message: user.nickname + " Joined the room", roomId: roomId });
         } else {
-            res.status(400).send({message: playerName + " was not in the room"});
+            res.status(400).send({ message: message });
         }
-    } else {
-        res.status(400).send({message: "Room doesn't exist"});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'An error occurred while joining the room' });
     }
 });
 
-router.get('/list', (req, res) => {
-    let roomList = [];
-    for(let roomId in rooms) {
-        let room = rooms[roomId];
-        roomList.push({id: roomId, players: room.players, maxPlayers: room.maxPlayers, status: room.status});
+router.post('/leave', async (req, res) => {
+    try {
+        const decoded = jsonwebtoken.decode(req.headers.authorization.split(' ')[1]);
+        const user = decoded.userWithoutPassword;
+
+        const message = await roomManager.leaveRoom(user.id);
+        if (message === 'success') {
+            res.send({ message: user.nickname + " left the room" });
+        } else {
+            res.status(400).send({ message: message });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'An error occurred while leaving the room' });
     }
-    res.send(roomList);
+});
+
+router.get('/list', async (req, res) => {
+    try {
+        const roomList = await roomManager.getRoomList();
+        res.send(roomList);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'An error occurred while fetching room list' });
+    }
 });
 
 module.exports = router;
