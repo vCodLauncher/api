@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 
-const img = '../cosmetics/assets/banner/test.webp'
+const img = '/banner/test.webp'
 
 async function run() {
 
@@ -22,7 +22,6 @@ async function run() {
         update : {},
         create: {
             imageUrl: img,
-
         }
     })
 
