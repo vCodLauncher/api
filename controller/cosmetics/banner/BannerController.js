@@ -17,4 +17,4 @@ const prisma = new PrismaClient();
     };
 
 
-module.exports = getBanner;
+module.exports = { getBanner };
