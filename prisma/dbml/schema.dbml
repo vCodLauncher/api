@@ -12,7 +12,8 @@ Table User {
   updatedAt DateTime [not null]
   roomId Int
   Room Room
-  banners Banner [not null]
+  bannerId Int
+  Banner Banner
 }
 
 Table Room {
@@ -30,8 +31,7 @@ Table Banner {
   updatedAt DateTime [not null]
   imageUrl String [not null]
   isAvailable Boolean [not null, default: true]
-  userId Int
-  user User
+  users User [not null]
 }
 
 Enum Role {
@@ -49,4 +49,4 @@ Enum Status {
 
 Ref: User.roomId > Room.id
 
-Ref: Banner.userId > User.id
+Ref: User.bannerId > Banner.id
