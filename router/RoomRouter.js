@@ -77,19 +77,19 @@ router.get('/:id', async (req, res) => {
 
 router.get('/findRoom', async (req, res) => {
     try {
-        // Retrieve the list of rooms
         const rooms = await roomManager.getRoomList();
 
-        // Filter out rooms that are full
         const availableRooms = rooms.filter(room => room.players.length < room.maxPlayers);
 
-        // If there are no available rooms, return a message
         if (availableRooms.length === 0) {
-            return res.status(404).send({ message: 'No available rooms found' });
+            const room = await roomManager.createRoom(maxPlayers);
+            res.send({ roomId: room.id, message: 'No available rooms, created a new room' });
+            const decoded = jsonwebtoken.decode(req.headers.authorization.split(' ')[1]);
+            const user = decoded.userWithoutPassword;
+            await roomManager.joinRoom(room.id, user.id);
+            res.send({ message: user.nickname + " Joined the room", roomId: room.id });
         }
 
-        // Otherwise, send the first available room
-        // You could also implement additional logic to select the best room based on certain criteria
         const roomToJoin = availableRooms[0];
         res.send({ roomId: roomToJoin.id, message: 'Room found' });
     } catch (error) {
