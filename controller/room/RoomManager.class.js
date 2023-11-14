@@ -83,10 +83,13 @@ class Room {
         }
         try {
             const room = await prisma.room.findUnique({where: {id: roomId}, include: {players: true}});
+            if (!room) {
+                throw new Error('Room not found');
+            }
             return room;
         } catch (error) {
             console.error(error);
-            throw new Error('An error occurred while fetching room list');
+            throw new Error('An error occurred while fetching room');
         }
     }
 }

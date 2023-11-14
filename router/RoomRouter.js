@@ -67,11 +67,15 @@ router.get('/list', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const room = await roomManager.getRoomById(parseInt(req.params.id));
+        const roomId = parseInt(req.params.id);
+        if (isNaN(roomId)) {
+            return res.status(400).send({ message: 'Invalid Room ID format' });
+        }
+        const room = await roomManager.getRoomById(roomId);
         res.send(room);
     } catch (error) {
         console.error(error);
-        res.status(500).send({ message: 'An error occurred while fetching room' });
+        res.status(500).send({ message: error.message });
     }
 });
 
