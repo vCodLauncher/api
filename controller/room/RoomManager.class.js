@@ -78,6 +78,9 @@ class Room {
 
     //get room by id
     async getRoomById(roomId) {
+        if (isNaN(roomId)) {
+            throw new Error('Invalid Room ID');
+        }
         try {
             const room = await prisma.room.findUnique({where: {id: roomId}, include: {players: true}});
             return room;
