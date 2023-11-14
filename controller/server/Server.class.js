@@ -6,7 +6,7 @@ const requestServer = async (req, res) => {
     const { serverId } = req.params;
 
     try {
-        const response = await axios.get(`${baseUrl}/server/create`);
+        const response = await axios.get(`${baseUrl}/server/get`);
         const serverDetails = response.data;
         console.log('debug');
 
