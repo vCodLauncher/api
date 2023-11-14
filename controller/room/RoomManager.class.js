@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const {PrismaClient} = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class Room {
@@ -18,13 +18,13 @@ class Room {
 
     async joinRoom(roomId, userId) {
         try {
-            const room = await prisma.room.findUnique({ where: { id: roomId }, include: { players: true } });
+            const room = await prisma.room.findUnique({where: {id: roomId}, include: {players: true}});
             if (room && room.players.length < room.maxPlayers) {
                 await prisma.room.update({
-                    where: { id: roomId },
+                    where: {id: roomId},
                     data: {
                         players: {
-                            connect: { id: userId }
+                            connect: {id: userId}
                         }
                     }
                 });
@@ -41,13 +41,13 @@ class Room {
 
     async leaveRoom(userId) {
         try {
-            const user = await prisma.user.findUnique({ where: { id: userId }, include: { Room: true } });
+            const user = await prisma.user.findUnique({where: {id: userId}, include: {Room: true}});
             if (user && user.Room) {
                 await prisma.room.update({
-                    where: { id: user.Room.id },
+                    where: {id: user.Room.id},
                     data: {
                         players: {
-                            disconnect: { id: userId }
+                            disconnect: {id: userId}
                         }
                     }
                 });
@@ -63,7 +63,7 @@ class Room {
 
     async getRoomList() {
         try {
-            const rooms = await prisma.room.findMany({ include: { players: true } });
+            const rooms = await prisma.room.findMany({include: {players: true}});
             return rooms.map(room => ({
                 id: room.id,
                 players: room.players,
@@ -79,7 +79,7 @@ class Room {
     //get room by id
     async getRoomById(roomId) {
         try {
-            const room = await prisma.room.findUnique({ where: { id: roomId }, include: { players: true } });
+            const room = await prisma.room.findUnique({where: {id: roomId}, include: {players: true}});
             return room;
         } catch (error) {
             console.error(error);

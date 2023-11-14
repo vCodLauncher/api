@@ -33,36 +33,39 @@ const addUserStats = async (req, res) => {
     const { kills, deaths, headshots } = req.body;
 
     try {
-        const user = await prisma.user.findUnique({
+        let userStats = await prisma.userStats.findUnique({
             where: {
-                id: Number(id),
-            },
-            select: {
-                stats: true
+                userId: Number(id),
             }
         });
 
-        const updatedUser = await prisma.user.update({
+        if (!userStats) {
+            userStats = await prisma.userStats.create({
+                data: {
+                    userId: Number(id),
+                    kills: 0,
+                    deaths: 0,
+                    headshots: 0,
+                }
+            });
+        }
+
+        const updatedUserStats = await prisma.userStats.update({
             where: {
-                id: Number(id),
+                userId: Number(id),
             },
             data: {
-                stats: {
-                    update: {
-                        kills: user.stats.kills + kills,
-                        deaths: user.stats.deaths + deaths,
-                        headshots: user.stats.headshots + headshots,
-                    }
-                }
-            },
-            include: {
-                stats: true
+                kills: userStats.kills + kills,
+                deaths: userStats.deaths + deaths,
+                headshots: userStats.headshots + headshots,
             }
         });
 
-        res.json({ updatedUser });
+        res.json({ updatedUserStats });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 }
+
+module.exports = { getUserStats, addUserStats };
 
