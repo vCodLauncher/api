@@ -84,35 +84,31 @@ router.get('/findRoom', async (req, res) => {
         const rooms = await roomManager.getRoomList();
         const availableRooms = rooms.filter(room => room.players.length < room.maxPlayers);
 
-        let responseMessage;
-        let roomIdToJoin;
-
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jsonwebtoken.decode(token);
         const userId = parseInt(decoded.userWithoutPassword.id);
 
         if (isNaN(userId)) {
-            throw new Error('Invalid user ID');
+            return res.status(400).send({ message: 'Invalid user ID' });
         }
 
+        let roomIdToJoin;
         if (availableRooms.length === 0) {
             const newRoom = await roomManager.createRoom(maxPlayers);
             roomIdToJoin = newRoom.id;
-            responseMessage = 'No available rooms, created a new room';
-
             await roomManager.joinRoom(roomIdToJoin, userId);
+            res.send({ message: 'No available rooms, created a new room', roomId: roomIdToJoin });
         } else {
-            const roomToJoin = availableRooms[0];
-            roomIdToJoin = roomToJoin.id;
-            responseMessage = 'Room found';
+            roomIdToJoin = availableRooms[0].id;
+            await roomManager.joinRoom(roomIdToJoin, userId);
+            res.send({ message: 'Room found and joined', roomId: roomIdToJoin });
         }
-
-        res.send({ message: responseMessage, roomId: roomIdToJoin });
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: error.message });
     }
 });
+
 
 
 
