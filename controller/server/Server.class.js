@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const baseUrl = 'https://master.codlauncher.com';
+const baseUrl = 'https://master.codlauncher.net';
 
 const requestServer = async (req, res) => {
     const { serverId } = req.params;
