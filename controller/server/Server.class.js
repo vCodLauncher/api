@@ -8,6 +8,7 @@ const requestServer = async (req, res) => {
     try {
         const response = await axios.get(`${baseUrl}/server/${serverId}`);
         const serverDetails = response.data;
+        console.log('debug');
 
         res.json(serverDetails);
     } catch (error) {

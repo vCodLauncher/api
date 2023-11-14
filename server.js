@@ -3,7 +3,7 @@ const cors = require('cors')
 
 const app = express()
 app.use(cors())
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3002
 
 const authRouter = require('./router/AuthRouter');
 const roomRouter = require('./router/RoomRouter');
