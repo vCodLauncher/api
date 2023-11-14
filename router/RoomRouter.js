@@ -78,25 +78,32 @@ router.get('/:id', async (req, res) => {
 router.get('/findRoom', async (req, res) => {
     try {
         const rooms = await roomManager.getRoomList();
-
         const availableRooms = rooms.filter(room => room.players.length < room.maxPlayers);
 
+        let responseMessage;
+        let roomIdToJoin;
+
         if (availableRooms.length === 0) {
-            const room = await roomManager.createRoom(maxPlayers);
-            res.send({ roomId: room.id, message: 'No available rooms, created a new room' });
+            const newRoom = await roomManager.createRoom(maxPlayers);
+            roomIdToJoin = newRoom.id;
+            responseMessage = 'No available rooms, created a new room';
+
             const decoded = jsonwebtoken.decode(req.headers.authorization.split(' ')[1]);
             const user = decoded.userWithoutPassword;
-            await roomManager.joinRoom(room.id, user.id);
-            res.send({ message: user.nickname + " Joined the room", roomId: room.id });
+            await roomManager.joinRoom(roomIdToJoin, user.id);
+        } else {
+            const roomToJoin = availableRooms[0];
+            roomIdToJoin = roomToJoin.id;
+            responseMessage = 'Room found';
         }
 
-        const roomToJoin = availableRooms[0];
-        res.send({ roomId: roomToJoin.id, message: 'Room found' });
+        res.send({ message: responseMessage, roomId: roomIdToJoin });
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: 'An error occurred while finding a room' });
     }
 });
+
 
 
 module.exports = router;
