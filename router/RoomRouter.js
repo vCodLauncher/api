@@ -83,20 +83,20 @@ router.get('/findRoom', async (req, res) => {
         let responseMessage;
         let roomIdToJoin;
 
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jsonwebtoken.decode(token);
+        const userId = parseInt(decoded.userWithoutPassword.id);
+
+        if (isNaN(userId)) {
+            throw new Error('Invalid user ID');
+        }
+
         if (availableRooms.length === 0) {
             const newRoom = await roomManager.createRoom(maxPlayers);
             roomIdToJoin = newRoom.id;
             responseMessage = 'No available rooms, created a new room';
 
-            const token = req.headers.authorization.split(' ')[1];
-            const decoded = jsonwebtoken.decode(token);
-            const userId = parseInt(decoded.userWithoutPassword.id);
-
-            if (!isNaN(userId)) {
-                await roomManager.joinRoom(roomIdToJoin, userId);
-            } else {
-                throw new Error('Invalid user ID');
-            }
+            await roomManager.joinRoom(roomIdToJoin, userId);
         } else {
             const roomToJoin = availableRooms[0];
             roomIdToJoin = roomToJoin.id;
@@ -109,6 +109,7 @@ router.get('/findRoom', async (req, res) => {
         res.status(500).send({ message: error.message });
     }
 });
+
 
 
 module.exports = router;
