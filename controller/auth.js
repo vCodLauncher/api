@@ -35,41 +35,32 @@ const authUser = async (req, res) => {
 
 const getMe = async (req, res) => {
     try {
-        // Vérifier si le header Authorization existe dans la requête
         if (!req.headers.authorization) {
             return res.status(401).json({ error: 'Authorization header missing' });
         }
 
-        // Diviser la chaîne d'autorisation pour obtenir le token
         const token = req.headers.authorization.split(' ')[1];
 
-        // Vérifier si le token est vide
         if (!token) {
             return res.status(401).json({ error: 'Token missing' });
         }
 
-        // Décoder le token
         const decoded = jsonwebtoken.decode(token);
 
-        // Vérifier si le décodage a réussi
         if (!decoded) {
             return res.status(401).json({ error: 'Invalid token' });
         }
 
-        // Vérifier si le token a expiré
         if (decoded.exp && Date.now() >= decoded.exp * 1000) {
             return res.status(401).json({ error: 'Token has expired' });
         }
 
-        // Vérifier si le décodage contient les informations de l'utilisateur
         if (!decoded.userWithoutPassword) {
             return res.status(401).json({ error: 'User information missing in token' });
         }
 
-        // Renvoyer les informations de l'utilisateur sans le mot de passe
         res.json({ user: decoded.userWithoutPassword });
     } catch (error) {
-        // Gérer les erreurs et renvoyer une réponse appropriée
         return res.status(500).json({ error: error.message });
     }
 }

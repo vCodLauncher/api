@@ -12,17 +12,27 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
   nickname  String
-  role      Role?    @default(Player)
+  role      Role?     @default(Player)
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   roomId    Int?
-  Room      Room?    @relation(fields: [roomId], references: [id])
+  Room      Room?     @relation(fields: [roomId], references: [id])
   bannerId  Int?
-  Banner    Banner?    @relation(fields: [bannerId], references: [id])
+  Banner    Banner?   @relation(fields: [bannerId], references: [id])
+  stats     UserStats?
+}
+
+model UserStats {
+  id        Int      @id @default(autoincrement())
+  kills     Int      @default(0)
+  deaths    Int      @default(0)
+  headshots Int      @default(0)
+  userId    Int      @unique
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model Room {
