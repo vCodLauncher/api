@@ -88,9 +88,15 @@ router.get('/findRoom', async (req, res) => {
             roomIdToJoin = newRoom.id;
             responseMessage = 'No available rooms, created a new room';
 
-            const decoded = jsonwebtoken.decode(req.headers.authorization.split(' ')[1]);
-            const user = decoded.userWithoutPassword;
-            await roomManager.joinRoom(roomIdToJoin, user.id);
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jsonwebtoken.decode(token);
+            const userId = parseInt(decoded.userWithoutPassword.id);
+
+            if (!isNaN(userId)) {
+                await roomManager.joinRoom(roomIdToJoin, userId);
+            } else {
+                throw new Error('Invalid user ID');
+            }
         } else {
             const roomToJoin = availableRooms[0];
             roomIdToJoin = roomToJoin.id;
@@ -100,10 +106,9 @@ router.get('/findRoom', async (req, res) => {
         res.send({ message: responseMessage, roomId: roomIdToJoin });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ message: 'An error occurred while finding a room' });
+        res.status(500).send({ message: error.message });
     }
 });
-
 
 
 module.exports = router;
