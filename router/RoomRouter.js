@@ -88,6 +88,11 @@ router.get('/findRoom', async (req, res) => {
             roomIdToJoin = availableRooms[0].id;
             await roomManager.joinRoom(roomIdToJoin, userId);
             res.send({ message: 'Room found and joined', roomId: roomIdToJoin });
+
+            // console log when a player join a room
+            const room = await roomManager.getRoomById(roomIdToJoin);
+            console.log(room.players[room.players.length - 1].nickname + " joined the room " + roomIdToJoin);
+
         }
     } catch (error) {
         console.error(error);
