@@ -5,3 +5,4 @@ const router = Router();
 
 router.use(verifyToken);
 
+module.exports = router;
