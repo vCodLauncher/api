@@ -1,4 +1,5 @@
 const { authUser, getMe} = require('../controller/auth');
+const {Router} = require("express");
 
 const router = Router();
 // Login a user
