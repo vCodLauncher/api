@@ -65,20 +65,6 @@ router.get('/list', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
-    try {
-        const roomId = parseInt(req.params.id);
-        if (isNaN(roomId)) {
-            return res.status(400).send({ message: 'Invalid Room ID format' });
-        }
-        const room = await roomManager.getRoomById(roomId);
-        res.send(room);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({ message: error.message });
-    }
-});
-
 router.get('/findRoom', async (req, res) => {
     try {
         const rooms = await roomManager.getRoomList();
@@ -108,6 +94,22 @@ router.get('/findRoom', async (req, res) => {
         res.status(500).send({ message: error.message });
     }
 });
+
+router.get('/:id', async (req, res) => {
+    try {
+        const roomId = parseInt(req.params.id);
+        if (isNaN(roomId)) {
+            return res.status(400).send({ message: 'Invalid Room ID format' });
+        }
+        const room = await roomManager.getRoomById(roomId);
+        res.send(room);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: error.message });
+    }
+});
+
+
 
 
 
