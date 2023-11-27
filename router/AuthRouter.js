@@ -1,5 +1,3 @@
-m
-
 const { authUser, getMe} = require('../controller/auth');
 
 const router = Router();
