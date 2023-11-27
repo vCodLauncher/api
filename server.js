@@ -23,5 +23,3 @@ app.use('/bannerURL', express.static("cosmetics/assets/banner"));
 app.listen(port, () => {
     console.log(`API démarrée sur http://localhost:${port}`)
 });
-
-// http://193.38.250.89:3000/execute?port=28965
